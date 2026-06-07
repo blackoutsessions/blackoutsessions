@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLACKOUT SESSIONS • Unfiltered Podcast</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+        
+        :root {
+            --accent: #ef4444;
+        }
+        
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .font-display {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+        }
+
+        .section-header {
+            font-size: 2.75rem;
+            line-height: 1.05;
+            font-weight: 700;
+            letter-spacing: -0.04em;
+        }
+
+        .podcast-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .podcast-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        .nav-link {
+            transition: color 0.2s ease;
+        }
+        
+        .nav-link:hover {
+            color: #ef4444;
+        }
+
+        .dark-gradient {
+            background: linear-gradient(180deg, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.65) 50%, rgba(10,10,10,0.95) 100%);
+        }
+
+        .episode-img {
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                        box-shadow 0.3s ease;
+        }
+        
+        .podcast-card:hover .episode-img {
+            transform: scale(1.03);
+        }
+
+        .neon-red {
+            text-shadow: 0 0 10px rgb(239 68 68 / 0.5);
+        }
+
+        .manifesto-item {
+            transition: all 0.2s ease;
+        }
+        
+        .manifesto-item:hover {
+            transform: translateX(4px);
+            border-color: #ef4444;
+        }
+
+        .waveform {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            height: 48px;
+        }
+        
+        .waveform-bar {
+            width: 4px;
+            background: #ef4444;
+            border-radius: 9999px;
+            transition: height 0.1s ease;
+        }
+
+        .modal {
+            animation: modalPopIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes modalPopIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .stat-number {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .edge-text {
+            position: relative;
+        }
+        
+        .edge-text::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(to right, #ef4444, transparent);
+        }
+    </style>
+</head>
+<body class="bg-zinc-950 text-zinc-200 overflow-x-hidden">
+    <!-- NAV -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-zinc-950/95 backdrop-blur-lg border-b border-zinc-800">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center gap-x-3">
+                <div class="w-9 h-9 bg-red-600 rounded flex items-center justify-center">
+                    <i class="fa-solid fa-microphone text-white text-2xl"></i>
+                </div>
+                <div>
+                    <span class="font-black text-3xl tracking-tighter">BLACKOUT</span>
+                    <span class="font-semibold text-3xl tracking-tight text-zinc-400">SESSIONS</span>
+                </div>
+            </div>
+
+            <!-- Desktop Nav -->
+            <div class="hidden md:flex items-center gap-x-9 text-sm font-medium">
+                <a href="#episodes" class="nav-link text-zinc-300 hover:text-white">Episodes</a>
+                <a href="#host" class="nav-link text-zinc-300 hover:text-white">Host</a>
+                <a href="#manifesto" class="nav-link text-zinc-300 hover:text-white">Manifesto</a>
+                <a href="#merch" class="nav-link text-zinc-300 hover:text-white">Merch</a>
+            </div>
+
+            <div class="flex items-center gap-x-3">
+                <!-- Subscribe Button -->
+                <button onclick="showSubscribeModal()"
+                        class="hidden sm:block px-6 py-2.5 text-sm font-semibold bg-white text-zinc-950 rounded-full hover:bg-zinc-100 active:scale-[0.985] transition-all">
+                    SUBSCRIBE
+                </button>
+                
+                <!-- Listen Button -->
+                <button onclick="document.getElementById('episodes').scrollIntoView({ behavior: 'smooth' })"
+                        class="px-5 py-2.5 text-sm font-semibold border border-zinc-700 hover:border-zinc-400 rounded-full flex items-center gap-x-2 transition-all active:scale-[0.985]">
+                    <i class="fa-solid fa-play text-red-500"></i>
+                    <span class="hidden sm:inline">LISTEN</span>
+                </button>
+
+                <!-- Mobile Menu -->
+                <button id="mobile-menu-btn"
+                        class="md:hidden w-10 h-10 flex items-center justify-center text-xl text-zinc-400 hover:text-white"
+                        onclick="toggleMobileMenu()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-zinc-800 bg-zinc-950">
+            <div class="px-6 py-6 flex flex-col gap-y-4 text-sm font-medium">
+                <a href="#episodes" class="py-1 text-zinc-300" onclick="toggleMobileMenu()">Episodes</a>
+                <a href="#host" class="py-1 text-zinc-300" onclick="toggleMobileMenu()">Host</a>
+                <a href="#manifesto" class="py-1 text-zinc-300" onclick="toggleMobileMenu()">Manifesto</a>
+                <a href="#merch" class="py-1 text-zinc-300" onclick="toggleMobileMenu()">Merch</a>
+                <div class="pt-4 border-t border-zinc-800 flex flex-col gap-y-3">
+                    <button onclick="showSubscribeModal(); toggleMobileMenu()" 
+                            class="w-full py-3 text-sm font-semibold bg-white text-zinc-950 rounded-full">
+                        SUBSCRIBE
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="relative min-h-[100dvh] flex items-center justify-center pt-20">
+        <!-- Background Image -->
+        <div class="absolute inset-0 bg-cover bg-center" 
+             style="background-image: url('images/hero.jpg')"></div>
+        
+        <!-- Dark Overlay -->
+        <div class="absolute inset-0 dark-gradient"></div>
+        
+        <!-- Hero Content -->
+        <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">
+            <div class="inline-flex items-center gap-x-2 px-4 py-1.5 rounded-full border border-zinc-700 bg-zinc-900/70 mb-6">
+                <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                <span class="text-xs font-semibold tracking-[2px] text-zinc-400">EPISODES COMING SOON</span>
+            </div>
+            
+            <h1 class="font-black text-[92px] md:text-[120px] leading-[0.88] tracking-[-6.5px] mb-2">
+                BLACKOUT<br>SESSIONS
+            </h1>
+            
+            <p class="max-w-xl mx-auto text-2xl md:text-3xl text-zinc-300 font-medium tracking-tight mb-4">
+                The podcast that says what everyone else is too scared to say.
+            </p>
+            
+            <p class="text-lg text-zinc-400 max-w-md mx-auto mb-10">
+                Current events. Taboo truths. Dark humor. Zero safe spaces.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <button onclick="document.getElementById('episodes').scrollIntoView({ behavior: 'smooth' })"
+                        class="group w-full sm:w-auto flex items-center justify-center gap-x-3 px-9 py-4 bg-red-600 hover:bg-red-500 active:bg-red-700 transition-all text-white font-semibold text-base rounded-2xl shadow-lg shadow-red-950/50">
+                    <i class="fa-solid fa-play mr-1 group-active:scale-90 transition"></i>
+                    <span>PLAY LATEST EPISODE</span>
+                </button>
+                
+                <button onclick="showSubscribeModal()"
+                        class="w-full sm:w-auto flex items-center justify-center gap-x-3 px-8 py-4 border border-zinc-600 hover:bg-zinc-900 active:bg-zinc-800 transition-all font-semibold text-base rounded-2xl">
+                    <span>SUBSCRIBE FREE</span>
+                </button>
+            </div>
+            
+            <div class="mt-12 flex justify-center">
+                <div class="flex items-center gap-x-2 text-xs uppercase tracking-[3px] text-zinc-500">
+                    <div>EXPLICIT</div>
+                    <div class="w-px h-3 bg-zinc-700"></div>
+                    <div>OFFENSIVE</div>
+                    <div class="w-px h-3 bg-zinc-700"></div>
+                    <div>UNCANCELLED</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 hidden md:block">
+            <div class="flex flex-col items-center gap-y-1 text-[10px] tracking-widest text-zinc-500">
+                <span>SCROLL TO ENTER THE VOID</span>
+                <i class="fa-solid fa-chevron-down text-lg animate-bounce"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- QUICK STATS / INTRO -->
+    <section class="border-b border-zinc-800 bg-zinc-900/50">
+        <div class="max-w-6xl mx-auto px-6 py-8 grid grid-cols-2 md:grid-cols-4 gap-y-8 text-center">
+            <div>
+                <div class="text-4xl font-black text-white tracking-tighter">COMING SOON</div>
+                <div class="text-xs text-zinc-500 tracking-widest mt-1">EPISODES</div>
+            </div>
+            <div>
+                <div class="text-4xl font-black text-white tracking-tighter">COMING SOON</div>
+                <div class="text-xs text-zinc-500 tracking-widest mt-1">DOWNLOADS</div>
+            </div>
+            <div>
+                <div class="text-4xl font-black text-white tracking-tighter">COMING SOON</div>
+                <div class="text-xs text-zinc-500 tracking-widest mt-1">TOP CHARTS • COMEDY</div>
+            </div>
+            <div>
+                <div class="text-4xl font-black text-white tracking-tighter">COMING SOON</div>
+                <div class="text-xs text-zinc-500 tracking-widest mt-1">GUESTS CANCELLED AFTER</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT THE SHOW -->
+    <section class="max-w-4xl mx-auto px-6 pt-20 pb-16 text-center">
+        <div class="uppercase text-red-500 text-xs tracking-[4px] font-semibold mb-3">THE LAST REFUGE FOR RAW CONVERSATION</div>
+        <h2 class="section-header tracking-[-1.5px] mb-6">We don't do safe.<br>We do <span class="text-red-500">real</span>.</h2>
+        
+        <p class="text-xl text-zinc-300 max-w-2xl mx-auto leading-relaxed">
+            Blackout Sessions is the long-form podcast where nothing is off-limits. 
+            Hosted by Miles and Johnny, they dive headfirst into the topics polite society pretends don't exist- 
+            biology, culture, politics, and the slow-motion collapse of Western sanity.
+        </p>
+        <p class="mt-4 text-zinc-400 max-w-lg mx-auto">
+            If you're easily offended, triggered by facts, or need a content warning... 
+            this show will ruin your day. And you'll probably thank us for it.
+        </p>
+    </section>
+
+    <!-- MEET THE HOSTS -->
+    <section id="host" class="max-w-7xl mx-auto px-6 py-16">
+        <div class="grid md:grid-cols-12 gap-x-12 items-center">
+            <!-- Host Image -->
+            <div class="md:col-span-5 relative">
+                <div class="aspect-[4/3.2] rounded-3xl overflow-hidden border border-zinc-800 shadow-2xl">
+                    <img src="images/host.jpg" alt="Miles and Johnny - Host of Blackout Sessions" 
+                         class="w-full h-full object-cover grayscale-[0.15]">
+                </div>
+                <div class="absolute -bottom-3 -right-3 bg-zinc-950 border border-zinc-700 px-5 py-2 rounded-2xl text-sm font-medium flex items-center gap-x-2">
+                    <i class="fa-solid fa-microphone text-red-500"></i>
+                    <span>Hosts • Producers • Professional Shit-Stirrers</span>
+                </div>
+            </div>
+            
+            <!-- Bio -->
+            <div class="md:col-span-7 pt-8 md:pt-0">
+                <div class="uppercase tracking-[3px] text-xs text-red-500 font-semibold mb-2">THE VOICES IN THE DARK</div>
+                <h3 class="font-black text-6xl tracking-tighter mb-6">Miles and Johnny</h3>
+                
+                <div class="space-y-5 text-[15px] text-zinc-300 max-w-prose">
+                    <p>Miles and Johnny have been called every name in the book and they wear them like badges of honor. 
+                    a proactive, pro-American force dedicated to protecting constitutional freedoms and driving positive change, 
+                    they built Blackout Sessions as the one place where the truth doesn't need a trigger warning.</p>
+                    
+                    <p>"Most podcasts want to be liked. We want to be <span class="font-semibold text-white">remembered</span>. 
+                    Even if it takes a few drinks and a complete disregard for your feelings to get there."</p>
+                </div>
+                
+                <div class="flex items-center gap-x-4 mt-8">
+                    <div class="text-xs px-4 py-2 border border-zinc-700 rounded-full">True Blood Americans</div>
+                    <div class="text-xs px-4 py-2 border border-zinc-700 rounded-full">Defenders of Freedom</div>
+                    <div class="text-xs px-4 py-2 border border-zinc-700 rounded-full">STILL STANDING</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LATEST EPISODES -->
+    <section id="episodes" class="bg-zinc-900 py-16 border-y border-zinc-800">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex items-end justify-between mb-10">
+                <div>
+                    <div class="text-red-500 text-xs tracking-[3px] font-semibold">THE BLACKOUT ARCHIVE</div>
+                    <h2 class="font-black text-5xl tracking-tighter">Latest Episodes Coming Soon</h2>
+                </div>
+                <a href="#" class="hidden md:flex items-center gap-x-2 text-sm font-medium text-zinc-400 hover:text-white group">
+                    VIEW FULL ARCHIVE 
+                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
+                </a>
+            </div>
+
+            <!-- Episode Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <!-- Ep 1 -->
+                <div class="podcast-card bg-zinc-950 border border-zinc-800 rounded-3xl overflow-hidden group">
+                    <div class="relative">
+                        <img src="images/ep1.jpg" alt="Episode 1 - The Pronoun Apocalypse" 
+                             class="w-full aspect-[4/3.1] object-cover episode-img">
+                        <div class="absolute top-4 left-4 px-3.5 py-1 bg-black/70 backdrop-blur text-xs font-mono tracking-widest rounded">EP 1</div>
+                        <div class="absolute top-4 right-4 px-3 py-1 bg-red-600 text-[10px] font-bold tracking-wider rounded">NEW</div>
+                    </div>
+                    <div class="p-5">
+                        <h4 class="font-bold text-[17px] leading-tight tracking-tight mb-1.5 pr-2">The Pronoun Apocalypse</h4>
+                        <p class="text-xs text-zinc-400 line-clamp-2 mb-3">When feelings became facts and language turned into a battlefield.</p>
+                        
+                        <div class="flex items-center justify-between text-xs mb-4">
+                            <div>
+                                <span class="text-zinc-500">with</span> 
+                                <span class="font-medium">Dr. Marcus Hale</span>
+                            </div>
+                            <div class="font-mono text-zinc-500">2h 51m</div>
+                        </div>
+                        
+                        <button onclick="playEpisode(0)"
+                                class="w-full flex items-center justify-center gap-x-2 py-3 text-sm font-semibold bg-zinc-900 hover:bg-red-600 active:bg-red-700 hover:text-white transition-all border border-zinc-700 hover:border-red-600 rounded-2xl group-hover:bg-red-600 group-hover:text-white group-hover:border-red-600">
+                            <i class="fa-solid fa-play"></i>
+                            <span>LISTEN NOW</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Ep 2 -->
+                <div class="podcast-card bg-zinc-950 border border-zinc-800 rounded-3xl overflow-hidden group">
+                    <div class="relative">
+                        <img src="images/ep2.jpg" alt="Episode 2 - The Comfort Crisis" 
+                             class="w-full aspect-[4/3.1] object-cover episode-img">
+                        <div class="absolute top-4 left-4 px-3.5 py-1 bg-black/70 backdrop-blur text-xs font-mono tracking-widest rounded">EP 2</div>
+                    </div>
+                    <div class="p-5">
+                        <h4 class="font-bold text-[17px] leading-tight tracking-tight mb-1.5 pr-2">The Comfort Crisis</h4>
+                        <p class="text-xs text-zinc-400 line-clamp-2 mb-3">Safe spaces, participation trophies, and why weakness is now a virtue.</p>
+                        
+                        <div class="flex items-center justify-between text-xs mb-4">
+                            <div>
+                                <span class="text-zinc-500">with</span> 
+                                <span class="font-medium">Cmdr. Elias Rook (Ret.)</span>
+                            </div>
+                            <div class="font-mono text-zinc-500">2h 12m</div>
+                        </div>
+                        
+                        <button onclick="playEpisode(1)"
+                                class="w-full flex items-center justify-center gap-x-2 py-3 text-sm font-semibold bg-zinc-900 hover:bg-red-600 active:bg-red-700 hover:text-white transition-all border border-zinc-700 hover:border-red-600 rounded-2xl group-hover:bg-red-600 group-hover:text-white group-hover:border-red-600">
+                            <i class="fa-solid fa-play"></i>
+                            <span>LISTEN NOW</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Ep 3 -->
+                <div class="podcast-card bg-zinc-950 border border-zinc-800 rounded-3xl overflow-hidden group">
+                    <div class="relative">
+                        <img src="images/ep3.jpg" alt="Episode 3 - Biology Doesn't Negotiate" 
+                             class="w-full aspect-[4/3.1] object-cover episode-img">
+                        <div class="absolute top-4 left-4 px-3.5 py-1 bg-black/70 backdrop-blur text-xs font-mono tracking-widest rounded">EP 3</div>
+                    </div>
+                    <div class="p-5">
+                        <h4 class="font-bold text-[17px] leading-tight tracking-tight mb-1.5 pr-2">Biology Doesn't Negotiate</h4>
+                        <p class="text-xs text-zinc-400 line-clamp-2 mb-3">Men. Women. Sports. Reality always wins in the end.</p>
+                        
+                        <div class="flex items-center justify-between text-xs mb-4">
+                            <div>
+                                <span class="text-zinc-500">with</span> 
+                                <span class="font-medium">Dr. Lena Voss</span>
+                            </div>
+                            <div class="font-mono text-zinc-500">3h 04m</div>
+                        </div>
+                        
+                        <button onclick="playEpisode(2)"
+                                class="w-full flex items-center justify-center gap-x-2 py-3 text-sm font-semibold bg-zinc-900 hover:bg-red-600 active:bg-red-700 hover:text-white transition-all border border-zinc-700 hover:border-red-600 rounded-2xl group-hover:bg-red-600 group-hover:text-white group-hover:border-red-600">
+                            <i class="fa-solid fa-play"></i>
+                            <span>LISTEN NOW</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Ep 4 -->
+                <div class="podcast-card bg-zinc-950 border border-zinc-800 rounded-3xl overflow-hidden group">
+                    <div class="relative">
+                        <img src="images/ep4.jpg" alt="Episode 4 - Blackout or Burnout" 
+                             class="w-full aspect-[4/3.1] object-cover episode-img">
+                        <div class="absolute top-4 left-4 px-3.5 py-1 bg-black/70 backdrop-blur text-xs font-mono tracking-widest rounded">EP 4</div>
+                    </div>
+                    <div class="p-5">
+                        <h4 class="font-bold text-[17px] leading-tight tracking-tight mb-1.5 pr-2">Blackout or Burnout</h4>
+                        <p class="text-xs text-zinc-400 line-clamp-2 mb-3">Coping mechanisms for a world that feels like it's ending.</p>
+                        
+                        <div class="flex items-center justify-between text-xs mb-4">
+                            <div>
+                                <span class="text-zinc-500">with</span> 
+                                <span class="font-medium">The Blackout Crew</span>
+                            </div>
+                            <div class="font-mono text-zinc-500">2h 38m</div>
+                        </div>
+                        
+                        <button onclick="playEpisode(3)"
+                                class="w-full flex items-center justify-center gap-x-2 py-3 text-sm font-semibold bg-zinc-900 hover:bg-red-600 active:bg-red-700 hover:text-white transition-all border border-zinc-700 hover:border-red-600 rounded-2xl group-hover:bg-red-600 group-hover:text-white group-hover:border-red-600">
+                            <i class="fa-solid fa-play"></i>
+                            <span>LISTEN NOW</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-8 md:hidden">
+                <a href="#" class="text-sm text-zinc-400 hover:text-white inline-flex items-center gap-x-1.5">BROWSE ALL EPISODES <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- THE BLACKOUT MANIFESTO -->
+    <section id="manifesto" class="max-w-6xl mx-auto px-6 py-20">
+        <div class="text-center mb-12">
+            <div class="text-red-500 text-xs tracking-[4px] font-bold mb-2">THE RULES OF THE VOID</div>
+            <h2 class="font-black text-6xl tracking-tighter">The Blackout Manifesto</h2>
+            <p class="text-zinc-400 mt-3 max-w-sm mx-auto">What we believe. What we don't apologize for.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div class="manifesto-item border border-zinc-800 hover:border-red-600/60 bg-zinc-900/60 p-7 rounded-3xl">
+                <div class="text-red-500 text-3xl mb-4"><i class="fa-solid fa-ban"></i></div>
+                <h4 class="font-bold text-xl mb-2">No Trigger Warnings</h4>
+                <p class="text-sm text-zinc-400">If the truth offends you, the problem isn't the truth. It's your relationship with reality.</p>
+            </div>
+            
+            <div class="manifesto-item border border-zinc-800 hover:border-red-600/60 bg-zinc-900/60 p-7 rounded-3xl">
+                <div class="text-red-500 text-3xl mb-4"><i class="fa-solid fa-skull"></i></div>
+                <h4 class="font-bold text-xl mb-2">Facts Over Feelings</h4>
+                <p class="text-sm text-zinc-400">We don't negotiate with biology, math, or basic common sense. Sorry not sorry.</p>
+            </div>
+            
+            <div class="manifesto-item border border-zinc-800 hover:border-red-600/60 bg-zinc-900/60 p-7 rounded-3xl">
+                <div class="text-red-500 text-3xl mb-4"><i class="fa-solid fa-wine-bottle"></i></div>
+                <h4 class="font-bold text-xl mb-2">Truth Straight, No Chaser</h4>
+                <p class="text-sm text-zinc-400">We drink our reality neat. If you need sugar-coating, this isn't your bar.</p>
+            </div>
+            
+            <div class="manifesto-item border border-zinc-800 hover:border-red-600/60 bg-zinc-900/60 p-7 rounded-3xl">
+                <div class="text-red-500 text-3xl mb-4"><i class="fa-solid fa-gavel"></i></div>
+                <h4 class="font-bold text-xl mb-2">Cancel Culture Stops Here</h4>
+                <p class="text-sm text-zinc-400">The studio door is the last line of defense. Inside these walls, you can still say it.</p>
+            </div>
+            
+            <div class="manifesto-item border border-zinc-800 hover:border-red-600/60 bg-zinc-900/60 p-7 rounded-3xl">
+                <div class="text-red-500 text-3xl mb-4"><i class="fa-solid fa-laugh-squint"></i></div>
+                <h4 class="font-bold text-xl mb-2">Dark Humor Required</h4>
+                <p class="text-sm text-zinc-400">If you can't laugh at the absurdity of modern life, you're part of the problem.</p>
+            </div>
+            
+            <div class="manifesto-item border border-zinc-800 hover:border-red-600/60 bg-zinc-900/60 p-7 rounded-3xl">
+                <div class="text-red-500 text-3xl mb-4"><i class="fa-solid fa-microphone-lines"></i></div>
+                <h4 class="font-bold text-xl mb-2">Guests Welcome. Bullshit Not.</h4>
+                <p class="text-sm text-zinc-400">Come with receipts or don't come at all. We fact-check everyone- including ourselves.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- MERCH -->
+    <section id="merch" class="bg-zinc-900 border-y border-zinc-800 py-16">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="grid md:grid-cols-12 gap-x-12 items-center">
+                <div class="md:col-span-7">
+                    <div class="uppercase text-xs tracking-[3px] text-red-500 font-semibold mb-2">REP THE VOID</div>
+                    <h2 class="font-black text-6xl tracking-tighter leading-none mb-4">Wear the blackout.<br>Own the chaos.</h2>
+                    <p class="text-lg text-zinc-300 max-w-md">Premium streetwear for people who don't need safe spaces or participation trophies.</p>
+                    
+                    <div class="mt-8 flex flex-wrap gap-3">
+                        <button onclick="showSubscribeModal()" 
+                                class="px-8 py-3.5 bg-white hover:bg-zinc-100 active:bg-zinc-200 text-zinc-950 font-semibold text-sm rounded-2xl flex items-center gap-x-2 transition">
+                            <span>SHOP THE COLLECTION</span>
+                        </button>
+                        <button onclick="document.getElementById('episodes').scrollIntoView({ behavior: 'smooth' })" 
+                                class="px-7 py-3.5 border border-zinc-600 hover:bg-zinc-800 text-sm font-medium rounded-2xl transition">
+                            LISTEN FIRST
+                        </button>
+                    </div>
+                    
+                    <div class="mt-8 text-xs text-zinc-500 flex items-center gap-x-4">
+                        <div class="flex -space-x-1">
+                            <div class="w-5 h-5 bg-zinc-700 rounded-full border border-zinc-600"></div>
+                            <div class="w-5 h-5 bg-zinc-700 rounded-full border border-zinc-600"></div>
+                            <div class="w-5 h-5 bg-zinc-700 rounded-full border border-zinc-600"></div>
+                        </div>
+                        <span>12k+ people already repping the blackout</span>
+                    </div>
+                </div>
+                
+                <div class="md:col-span-5 mt-10 md:mt-0">
+                    <div class="relative rounded-3xl overflow-hidden border border-zinc-700 shadow-xl">
+                        <img src="images/merch.jpg" alt="Blackout Sessions Merch - Premium Black T-Shirt" class="w-full">
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-6">
+                            <div class="font-bold">CLASSIC BLACKOUT TEE</div>
+                            <div class="text-xs text-zinc-400">Heavyweight cotton • $38</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="max-w-3xl mx-auto px-6 py-20 text-center">
+        <div class="text-red-500 text-xs tracking-[3px] mb-3 font-semibold">STILL HERE?</div>
+        <h2 class="font-black text-6xl tracking-tighter mb-4">Good.<br>You're one of us now.</h2>
+        <p class="text-xl text-zinc-300">The blackout is spreading. Join the thousands who refuse to play along.</p>
+        
+        <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+            <button onclick="showSubscribeModal()"
+                    class="px-10 py-4 bg-red-600 hover:bg-red-500 active:bg-red-700 font-semibold rounded-2xl text-lg transition">
+                START LISTENING FREE
+            </button>
+            <button onclick="document.getElementById('host').scrollIntoView({ behavior: 'smooth' })"
+                    class="px-8 py-4 border border-zinc-700 hover:bg-zinc-900 font-medium rounded-2xl text-lg transition">
+                MEET MILES AND JOHNNY
+            </button>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-zinc-800 bg-black py-10">
+        <div class="max-w-7xl mx-auto px-6 text-xs text-zinc-500 flex flex-col md:flex-row md:items-center justify-between gap-y-4">
+            <div>© 2026 BLACKOUT SESSIONS. All rights fucking reserved.</div>
+            <div class="flex gap-x-5">
+                <a href="#" class="hover:text-zinc-300">Spotify</a>
+                <a href="#" class="hover:text-zinc-300">Apple</a>
+                <a href="#" class="hover:text-zinc-300">YouTube</a>
+                <a href="#" class="hover:text-zinc-300">Rumble</a>
+            </div>
+            <div class="text-[10px]">Made for people who can handle the truth.</div>
+        </div>
+    </footer>
+
+    <!-- LISTEN MODAL -->
+    <div id="listen-modal" onclick="if (event.target.id === 'listen-modal') closeModal()" 
+         class="hidden fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4">
+        <div onclick="event.stopImmediatePropagation()" 
+             class="modal w-full max-w-[520px] bg-zinc-950 border border-zinc-700 rounded-3xl overflow-hidden">
+            
+            <!-- Modal Header -->
+            <div class="px-6 pt-5 pb-4 border-b border-zinc-800 flex items-start justify-between">
+                <div>
+                    <div id="modal-ep-number" class="font-mono text-xs text-red-500 tracking-[2px]"></div>
+                    <div id="modal-ep-title" class="font-bold text-2xl tracking-tight pr-8"></div>
+                </div>
+                <button onclick="closeModal()" class="text-zinc-400 hover:text-white text-2xl leading-none mt-1">&times;</button>
+            </div>
+            
+            <div class="p-6">
+                <!-- Guest & Meta -->
+                <div class="flex justify-between text-sm mb-5">
+                    <div>
+                        <span class="text-xs text-zinc-500">GUEST</span><br>
+                        <span id="modal-guest" class="font-medium"></span>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-zinc-500">DURATION</span><br>
+                        <span id="modal-duration" class="font-mono"></span>
+                    </div>
+                </div>
+                
+                <!-- Fake Player -->
+                <div class="bg-zinc-900 border border-zinc-700 rounded-2xl p-5">
+                    <!-- Waveform -->
+                    <div class="waveform mb-5 px-1" id="waveform">
+                        <div class="waveform-bar h-3" style="height: 12px"></div>
+                        <div class="waveform-bar h-6" style="height: 24px"></div>
+                        <div class="waveform-bar h-4" style="height: 16px"></div>
+                        <div class="waveform-bar h-8" style="height: 32px"></div>
+                        <div class="waveform-bar h-5" style="height: 20px"></div>
+                        <div class="waveform-bar h-7" style="height: 28px"></div>
+                        <div class="waveform-bar h-3" style="height: 12px"></div>
+                        <div class="waveform-bar h-6" style="height: 24px"></div>
+                        <div class="waveform-bar h-4" style="height: 16px"></div>
+                        <div class="waveform-bar h-8" style="height: 32px"></div>
+                        <div class="waveform-bar h-5" style="height: 20px"></div>
+                        <div class="waveform-bar h-3" style="height: 12px"></div>
+                    </div>
+                    
+                    <!-- Progress -->
+                    <div class="flex items-center gap-x-3 mb-4">
+                        <div id="current-time" class="font-mono text-xs w-10 text-right text-zinc-400">00:00</div>
+                        <div class="flex-1 bg-zinc-700 h-1 rounded-full overflow-hidden cursor-pointer" onclick="seekFakeAudio(event)">
+                            <div id="progress-bar" class="bg-red-600 h-1 w-0 transition-all" style="width: 0%"></div>
+                        </div>
+                        <div id="total-time" class="font-mono text-xs w-10 text-zinc-400">2:51</div>
+                    </div>
+                    
+                    <!-- Controls -->
+                    <div class="flex items-center justify-center gap-x-6">
+                        <button onclick="rewindFake()" class="text-zinc-400 hover:text-white text-xl"><i class="fa-solid fa-backward"></i></button>
+                        
+                        <button id="play-btn" onclick="togglePlay()"
+                                class="w-14 h-14 flex items-center justify-center bg-red-600 hover:bg-red-500 active:bg-red-700 transition text-white text-2xl rounded-full shadow-lg">
+                            <i class="fa-solid fa-play ml-0.5" id="play-icon"></i>
+                        </button>
+                        
+                        <button onclick="forwardFake()" class="text-zinc-400 hover:text-white text-xl"><i class="fa-solid fa-forward"></i></button>
+                    </div>
+                </div>
+                
+                <div class="text-[10px] text-center text-zinc-500 mt-4 tracking-wider">SIMULATED PLAYER • FULL EPISODES ON SPOTIFY / APPLE / YOUTUBE</div>
+            </div>
+            
+            <!-- Platform links -->
+            <div class="px-6 py-5 bg-zinc-900 border-t border-zinc-700 flex flex-wrap gap-2 justify-center text-xs">
+                <div class="px-4 py-1.5 bg-zinc-800 rounded-full flex items-center gap-x-1.5 cursor-pointer hover:bg-zinc-700" onclick="window.open('https://open.spotify.com', '_blank')">
+                    <i class="fa-brands fa-spotify"></i> <span>Spotify</span>
+                </div>
+                <div class="px-4 py-1.5 bg-zinc-800 rounded-full flex items-center gap-x-1.5 cursor-pointer hover:bg-zinc-700" onclick="window.open('https://podcasts.apple.com', '_blank')">
+                    <i class="fa-brands fa-apple"></i> <span>Apple</span>
+                </div>
+                <div class="px-4 py-1.5 bg-zinc-800 rounded-full flex items-center gap-x-1.5 cursor-pointer hover:bg-zinc-700" onclick="window.open('https://youtube.com', '_blank')">
+                    <i class="fa-brands fa-youtube"></i> <span>YouTube</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subscribe Modal -->
+    <div id="subscribe-modal" onclick="if (event.target.id === 'subscribe-modal') closeSubscribeModal()" 
+         class="hidden fixed inset-0 bg-black/80 z-[110] flex items-center justify-center p-4">
+        <div onclick="event.stopImmediatePropagation()" class="modal bg-zinc-950 border border-zinc-700 rounded-3xl max-w-md w-full p-8">
+            <div class="text-center">
+                <div class="mx-auto w-16 h-16 bg-red-600/10 text-red-500 flex items-center justify-center rounded-2xl mb-5">
+                    <i class="fa-solid fa-headset text-4xl"></i>
+                </div>
+                <h3 class="font-black text-4xl tracking-tighter">Join the blackout.</h3>
+                <p class="text-sm text-zinc-400 mt-2">New episodes. No ads. Early access. Zero corporate censorship.</p>
+            </div>
+            
+            <div class="mt-8 space-y-3">
+                <button onclick="subscribeTo('spotify')" class="w-full flex items-center justify-center gap-x-3 py-3.5 border border-zinc-700 hover:bg-zinc-900 rounded-2xl text-sm font-medium">
+                    <i class="fa-brands fa-spotify text-xl"></i> 
+                    <span>Listen on Spotify</span>
+                </button>
+                <button onclick="subscribeTo('apple')" class="w-full flex items-center justify-center gap-x-3 py-3.5 border border-zinc-700 hover:bg-zinc-900 rounded-2xl text-sm font-medium">
+                    <i class="fa-brands fa-apple text-xl"></i> 
+                    <span>Listen on Apple Podcasts</span>
+                </button>
+                <button onclick="subscribeTo('youtube')" class="w-full flex items-center justify-center gap-x-3 py-3.5 border border-zinc-700 hover:bg-zinc-900 rounded-2xl text-sm font-medium">
+                    <i class="fa-brands fa-youtube text-xl"></i> 
+                    <span>Watch on YouTube</span>
+                </button>
+            </div>
+            
+            <div class="text-center mt-6">
+                <button onclick="closeSubscribeModal()" class="text-xs text-zinc-500 hover:text-zinc-300">MAYBE LATER</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tailwind script
+        function initializeTailwind() {
+            document.documentElement.style.setProperty('--accent', '#ef4444');
+        }
+        
+        // Mobile menu
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+        
+        // Episode data
+        const episodes = [
+            {
+                id: 1,
+                title: "The Pronoun Apocalypse",
+                guest: "Dr. Marcus Hale",
+                duration: "2h 51m",
+                desc: "When feelings became facts and language turned into a battlefield."
+            },
+            {
+                id: 2,
+                title: "The Comfort Crisis",
+                guest: "Cmdr. Elias Rook (Ret.)",
+                duration: "2h 12m",
+                desc: "Safe spaces, participation trophies, and why weakness is now a virtue."
+            },
+            {
+                id: 3,
+                title: "Biology Doesn't Negotiate",
+                guest: "Dr. Lena Voss",
+                duration: "3h 04m",
+                desc: "Men. Women. Sports. Reality always wins in the end."
+            },
+            {
+                id: 4,
+                title: "Blackout or Burnout",
+                guest: "The Blackout Crew",
+                duration: "2h 38m",
+                desc: "Coping mechanisms for a world that feels like it's ending."
+            }
+        ]
+        
+        let currentEpisode = null;
+        let isPlaying = false;
+        let progressInterval = null;
+        let currentProgress = 0;
+        
+        function playEpisode(index) {
+            const ep = episodes[index];
+            currentEpisode = ep;
+            
+            // Populate modal
+            document.getElementById('modal-ep-number').innerHTML = `EPISODE ${ep.id}`;
+            document.getElementById('modal-ep-title').innerHTML = ep.title;
+            document.getElementById('modal-guest').innerHTML = ep.guest;
+            document.getElementById('modal-duration').innerHTML = ep.duration;
+            document.getElementById('total-time').innerHTML = ep.duration.split(' ')[0];
+            
+            // Reset player state
+            resetPlayer();
+            
+            // Show modal
+            document.getElementById('listen-modal').classList.remove('hidden');
+            document.getElementById('listen-modal').classList.add('flex');
+        }
+        
+        function resetPlayer() {
+            isPlaying = false;
+            currentProgress = 0;
+            clearInterval(progressInterval);
+            
+            const playIcon = document.getElementById('play-icon');
+            playIcon.classList.remove('fa-pause');
+            playIcon.classList.add('fa-play');
+            
+            document.getElementById('progress-bar').style.width = '0%';
+            document.getElementById('current-time').innerHTML = '00:00';
+            
+            // Reset waveform to static
+            resetWaveform();
+        }
+        
+        function resetWaveform() {
+            const bars = document.querySelectorAll('#waveform .waveform-bar');
+            bars.forEach((bar, i) => {
+                const heights = [12, 24, 16, 32, 20, 28, 12, 24, 16, 32, 20, 12];
+                bar.style.height = heights[i] + 'px';
+                bar.style.transition = 'height 0.1s ease';
+            });
+        }
+        
+        function togglePlay() {
+            const playIcon = document.getElementById('play-icon');
+            const bars = document.querySelectorAll('#waveform .waveform-bar');
+            
+            if (!isPlaying) {
+                // Start playing
+                isPlaying = true;
+                playIcon.classList.remove('fa-play');
+                playIcon.classList.add('fa-pause');
+                
+                // Animate waveform
+                bars.forEach(bar => {
+                    bar.style.transition = 'height 0.15s ease';
+                });
+                
+                progressInterval = setInterval(() => {
+                    currentProgress += 0.8;
+                    if (currentProgress >= 100) {
+                        currentProgress = 100;
+                        stopPlayback();
+                    }
+                    
+                    document.getElementById('progress-bar').style.width = currentProgress + '%';
+                    
+                    // Update time
+                    const totalSeconds = 171; // ~2:51
+                    const currentSeconds = Math.floor((currentProgress / 100) * totalSeconds);
+                    const min = Math.floor(currentSeconds / 60);
+                    const sec = currentSeconds % 60;
+                    document.getElementById('current-time').innerHTML = 
+                        `${min}:${sec < 10 ? '0' + sec : sec}`;
+                    
+                    // Animate bars randomly when playing
+                    if (isPlaying) {
+                        bars.forEach((bar, i) => {
+                            const base = [12, 24, 16, 32, 20, 28, 12, 24, 16, 32, 20, 12][i];
+                            const variation = Math.random() * 18 + 6;
+                            bar.style.height = Math.max(8, Math.min(38, base + (Math.random() - 0.5) * variation)) + 'px';
+                        });
+                    }
+                }, 180);
+                
+            } else {
+                stopPlayback();
+            }
+        }
+        
+        function stopPlayback() {
+            isPlaying = false;
+            clearInterval(progressInterval);
+            
+            const playIcon = document.getElementById('play-icon');
+            playIcon.classList.remove('fa-pause');
+            playIcon.classList.add('fa-play');
+            
+            // Freeze waveform at current state or reset slightly
+            const bars = document.querySelectorAll('#waveform .waveform-bar');
+            bars.forEach(bar => {
+                bar.style.transition = 'height 0.3s ease';
+            });
+        }
+        
+        function seekFakeAudio(e) {
+            const progressContainer = e.currentTarget || e.target;
+            const rect = progressContainer.getBoundingClientRect();
+            const percent = ((e.clientX - rect.left) / rect.width) * 100;
+            
+            currentProgress = Math.max(0, Math.min(100, percent));
+            document.getElementById('progress-bar').style.width = currentProgress + '%';
+            
+            // Update time
+            const totalSeconds = 171;
+            const currentSeconds = Math.floor((currentProgress / 100) * totalSeconds);
+            const min = Math.floor(currentSeconds / 60);
+            const sec = currentSeconds % 60;
+            document.getElementById('current-time').innerHTML = `${min}:${sec < 10 ? '0' + sec : sec}`;
+            
+            if (isPlaying && currentProgress >= 100) {
+                stopPlayback();
+            }
+        }
+        
+        function rewindFake() {
+            currentProgress = Math.max(0, currentProgress - 10);
+            document.getElementById('progress-bar').style.width = currentProgress + '%';
+            
+            const totalSeconds = 171;
+            const currentSeconds = Math.floor((currentProgress / 100) * totalSeconds);
+            const min = Math.floor(currentSeconds / 60);
+            const sec = currentSeconds % 60;
+            document.getElementById('current-time').innerHTML = `${min}:${sec < 10 ? '0' + sec : sec}`;
+        }
+        
+        function forwardFake() {
+            currentProgress = Math.min(100, currentProgress + 10);
+            document.getElementById('progress-bar').style.width = currentProgress + '%';
+            
+            const totalSeconds = 171;
+            const currentSeconds = Math.floor((currentProgress / 100) * totalSeconds);
+            const min = Math.floor(currentSeconds / 60);
+            const sec = currentSeconds % 60;
+            document.getElementById('current-time').innerHTML = `${min}:${sec < 10 ? '0' + sec : sec}`;
+            
+            if (currentProgress >= 100 && isPlaying) {
+                stopPlayback();
+            }
+        }
+        
+        function closeModal() {
+            const modal = document.getElementById('listen-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+            
+            // Stop any playback
+            if (isPlaying) {
+                stopPlayback();
+            }
+            resetPlayer();
+        }
+        
+        function showSubscribeModal() {
+            document.getElementById('subscribe-modal').classList.remove('hidden');
+            document.getElementById('subscribe-modal').classList.add('flex');
+        }
+        
+        function closeSubscribeModal() {
+            const modal = document.getElementById('subscribe-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+        
+        function subscribeTo(platform) {
+            closeSubscribeModal();
+            
+            let url = '';
+            let msg = '';
+            
+            if (platform === 'spotify') {
+                url = 'https://open.spotify.com/search/blackout%20sessions';
+                msg = 'Opening Spotify...';
+            } else if (platform === 'apple') {
+                url = 'https://podcasts.apple.com/us/podcast';
+                msg = 'Opening Apple Podcasts...';
+            } else if (platform === 'youtube') {
+                url = 'https://www.youtube.com/results?search_query=blackout+sessions+podcast';
+                msg = 'Opening YouTube...';
+            }
+            
+            // Show toast
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-6 left-1/2 -translate-x-1/2 bg-zinc-900 border border-zinc-700 text-sm px-5 py-3 rounded-2xl flex items-center gap-x-2 z-[200]`;
+            toast.innerHTML = `
+                <span>${msg}</span>
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                if (url) window.open(url, '_blank');
+                toast.style.transition = 'all 0.2s ease';
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 200);
+            }, 650);
+        }
+        
+        // Keyboard support
+        function setupKeyboardControls() {
+            document.addEventListener('keydown', function(e) {
+                const listenModal = document.getElementById('listen-modal');
+                if (!listenModal.classList.contains('hidden') && listenModal.classList.contains('flex')) {
+                    if (e.key === ' ' || e.key === 'k') {
+                        e.preventDefault();
+                        togglePlay();
+                    }
+                    if (e.key === 'Escape') {
+                        closeModal();
+                    }
+                    if (e.key === 'ArrowLeft') {
+                        rewindFake();
+                    }
+                    if (e.key === 'ArrowRight') {
+                        forwardFake();
+                    }
+                }
+                
+                if (e.key === 'Escape') {
+                    const subModal = document.getElementById('subscribe-modal');
+                    if (!subModal.classList.contains('hidden')) {
+                        closeSubscribeModal();
+                    }
+                }
+            });
+            
+            // Make waveform bars clickable too
+            const waveformContainer = document.getElementById('waveform');
+            if (waveformContainer) {
+                waveformContainer.addEventListener('click', function(e) {
+                    const rect = waveformContainer.getBoundingClientRect();
+                    const percent = ((e.clientX - rect.left) / rect.width) * 100;
+                    currentProgress = Math.max(0, Math.min(100, percent));
+                    document.getElementById('progress-bar').style.width = currentProgress + '%';
+                    
+                    const totalSeconds = 171;
+                    const currentSeconds = Math.floor((currentProgress / 100) * totalSeconds);
+                    const min = Math.floor(currentSeconds / 60);
+                    const sec = currentSeconds % 60;
+                    document.getElementById('current-time').innerHTML = `${min}:${sec < 10 ? '0' + sec : sec}`;
+                });
+            }
+        }
+        
+        // Initialize everything
+        function init() {
+            initializeTailwind();
+            setupKeyboardControls();
+            
+            // Easter egg: Konami code or just console message
+            console.log('%c[BLACKOUT SESSIONS] Site initialized. No safe spaces detected.', 'color:#666');
+            
+            // Optional: Preload a hint
+            setTimeout(() => {
+                const hero = document.querySelector('section');
+                if (hero) {
+                    // subtle ready state
+                }
+            }, 1200);
+            
+            // Make sure modals are properly classed on start
+            document.getElementById('listen-modal').classList.add('hidden');
+            document.getElementById('subscribe-modal').classList.add('hidden');
+        }
+        
+        // Boot
+        window.onload = init;
+    </script>
+</body>
+</html>
